@@ -4,42 +4,42 @@ import pandas as pd
 def preprocess(data):
     pattern = '\d{1,2}/\d{1,2}/\d{2,4},\s\d{1,2}:\d{2}\s-\s'
 
-    messages = re.split(pattern, data)[1:]
+    msgs = re.split(pattern, data)[1:]
     dates = re.findall(pattern, data)
 
-    df = pd.DataFrame({'user_message': messages, 'message_date': dates})
+    dataframe = pd.DataFrame({'user_msg': msgs, 'message_date': dates})
     # convert message_date type
     
-    df['message_date'] = pd.to_datetime(df['message_date'], format='%d/%m/%y, %H:%M - ')
+    dataframe['message_date'] = pd.to_datetime(dataframe['message_date'], format='%d/%m/%y, %H:%M - ')
 
-    df.rename(columns={'message_date': 'date'}, inplace=True)
+    dataframe.rename(columns={'message_date': 'date'}, inplace=True)
 
     users = []
-    messages = []
-    for message in df['user_message']:
-        entry = re.split('([\w\W]+?):\s', message)
+    msgs = []
+    for msg in dataframe['user_msg']:
+        entry = re.split('([\w\W]+?):\s', msg)
         if entry[1:]:  # user name
             users.append(entry[1])
-            messages.append(" ".join(entry[2:]))
+            msgs.append(" ".join(entry[2:]))
         else:
             users.append('group_notification')
-            messages.append(entry[0])
+            msgs.append(entry[0])
 
-    df['user'] = users
-    df['message'] = messages
-    df.drop(columns=['user_message'], inplace=True)
+    dataframe['user'] = users
+    dataframe['msg'] = msgs
+    dataframe.drop(columns=['user_msg'], inplace=True)
 
-    df['only_date'] = df['date'].dt.date
-    df['year'] = df['date'].dt.year
-    df['month_num'] = df['date'].dt.month
-    df['month'] = df['date'].dt.month_name()
-    df['day'] = df['date'].dt.day
-    df['day_name'] = df['date'].dt.day_name()
-    df['hour'] = df['date'].dt.hour
-    df['minute'] = df['date'].dt.minute
+    dataframe['only_date'] = dataframe['date'].dt.date
+    dataframe['year'] = dataframe['date'].dt.year
+    dataframe['month_num'] = dataframe['date'].dt.month
+    dataframe['month'] = dataframe['date'].dt.month_name()
+    dataframe['day'] = dataframe['date'].dt.day
+    dataframe['day_name'] = dataframe['date'].dt.day_name()
+    dataframe['hour'] = dataframe['date'].dt.hour
+    dataframe['minute'] = dataframe['date'].dt.minute
 
     period = []
-    for hour in df[['day_name', 'hour']]['hour']:
+    for hour in dataframe[['day_name', 'hour']]['hour']:
         if hour == 23:
             period.append(str(hour) + "-" + str('00'))
         elif hour == 0:
@@ -47,6 +47,6 @@ def preprocess(data):
         else:
             period.append(str(hour) + "-" + str(hour + 1))
 
-    df['period'] = period
+    dataframe['period'] = period
 
-    return df
+    return dataframe
