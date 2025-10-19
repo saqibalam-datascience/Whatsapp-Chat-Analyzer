@@ -2,5 +2,5 @@
 A streamlit app to analyze your whatsapp chats
 
 Created by :
-Saqib Alam Ansari
-Shivani Shrivastava
+
+Alfiya Sultana Ansari
