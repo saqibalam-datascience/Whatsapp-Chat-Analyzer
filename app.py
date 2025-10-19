@@ -13,7 +13,9 @@ if uploaded_file is not None:
 
     # fetch unique users
     user_list = df['user'].unique().tolist()
-    user_list.remove('group_notification')
+    # Safely remove 'group_notification' only if it exists
+    if 'group_notification' in user_list:
+        user_list.remove('group_notification')
     user_list.sort()
     user_list.insert(0,"Overall")
 
@@ -124,16 +126,9 @@ if uploaded_file is not None:
             st.dataframe(emoji_df)
         with col2:
             fig,ax = plt.subplots()
-            ax.pie(emoji_df[1].head(),labels=emoji_df[0].head(),autopct="%0.2f")
-            st.pyplot(fig)
-
-
-
-
-
-
-
-
-
-
-
+            # Check if emoji_df has data before plotting
+            if not emoji_df.empty and emoji_df.shape[1] > 1:
+                 ax.pie(emoji_df[1].head(),labels=emoji_df[0].head(),autopct="%0.2f")
+                 st.pyplot(fig)
+            else:
+                 st.write("No emojis to display.")
